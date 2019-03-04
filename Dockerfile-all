@@ -1,0 +1,6 @@
+FROM alpine
+MAINTAINER Amine Ben Asker <ben.asker.amine@gmail.com>
+COPY --from=yurilz/python3.4 /usr/local /usr/local
+COPY --from=yurilz/python3.5 /usr/local /usr/local
+COPY --from=yurilz/python3.6 /usr/local /usr/local
+COPY --from=yurilz/python3.7 /usr/local /usr/local
