@@ -5,8 +5,10 @@ DOCKER_BUILD_OPTIONS=
 
 DOCKER_IMAGE_NAME=python$(DOCKER_IMAGE_VERSION)$(DOCKER_OS_ARCH)
 PYTHON_MAKE_OPTIONS=
-DOCKER_BUILD_TAGS:=
+DOCKER_BUILD_ARGS:=
 
+ifndef CI_BUILD_NUMBER
+	CI_BUILD_NUMBER:=0
 
 ifdef ARCH
 	DOCKER_OS_ARCH:=-$(ARCH)
@@ -23,10 +25,10 @@ else
 endif
 
 ifdef PYTHON_VERSION
-	DOCKER_BUILD_TAGS:=$(DOCKER_BUILD_TAGS) --build-arg python_version=$(PYTHON_VERSION)
+	DOCKER_BUILD_ARGS:=$(DOCKER_BUILD_ARGS) --build-arg python_version=$(PYTHON_VERSION)
 endif
 ifdef PYTHON_MAKE_OPTIONS
-	DOCKER_BUILD_TAGS:=$(DOCKER_BUILD_TAGS) --build-arg python_make_options=$(PYTHON_MAKE_OPTIONS)
+	DOCKER_BUILD_ARGS:=$(DOCKER_BUILD_ARGS) --build-arg python_make_options=$(PYTHON_MAKE_OPTIONS)
 endif
 
 
@@ -44,10 +46,10 @@ help: ## This help.
 # docker TASKS
 # Build the container
 build: ## Build the container
-	docker build -t $(DOCKER_IMAGE_NAME) $(DOCKER_BUILD_OPTIONS) $(DOCKER_BUILD_TAGS) .
+	docker build -t $(DOCKER_IMAGE_NAME) $(DOCKER_BUILD_OPTIONS) $(DOCKER_BUILD_ARGS) .
 
 build-nc: ## Build the container without caching
-	docker build --no-cache  -t $(DOCKER_IMAGE_NAME) $(DOCKER_BUILD_OPTIONS) $(DOCKER_BUILD_TAGS) .
+	docker build --no-cache  -t $(DOCKER_IMAGE_NAME) $(DOCKER_BUILD_OPTIONS) $(DOCKER_BUILD_ARGS) .
 
 release: build-nc publish ## Make a release by building and publishing the `{version}` ans `latest` tagged containers 
 
@@ -72,6 +74,7 @@ tag-latest: ## Generate container `latest` tag
 tag-version: ## Generate container `{version}` tag
 	@echo 'create tag $(DOCKER_IMAGE_NAME)'
 	docker tag $(DOCKER_IMAGE_NAME) $(DOCKER_IMAGE_PREFIX)/$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)
+	docker tag $(DOCKER_IMAGE_NAME) $(DOCKER_IMAGE_PREFIX)/$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)-$(CI_BUILD_NUMBER)
 
 
 # login to Dcoker Hub
