@@ -3,6 +3,7 @@ services: docker
 env:
   global:
   - ARCH=amd64
+  - CI=amd64
   matrix:
   - PYTHON_VERSION=3.7.2
   - PYTHON_VERSION=3.6.8
