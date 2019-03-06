@@ -60,7 +60,7 @@ build-nc: ## Build the container without caching
 release: build-nc publish ## Make a release by building and publishing the `{version}` ans `latest` tagged containers 
 
 # docker publish
-publish: docker-login publish-version ## Publish the `{version}` ans `latest` tagged containers 
+publish: docker-login publish-version publish-latest ## Publish the `{version}` ans `latest` tagged containers
 
 publish-latest: tag-latest ## Publish the `latest` taged container 
 	@echo 'publish latest to $(DOCKER_IMAGE_PREFIX)'
@@ -71,7 +71,7 @@ publish-version: tag-version ## Publish the `{version}` taged container
 	docker push $(DOCKER_IMAGE_PREFIX)/$(DOCKER_IMAGE_NAME)
 
 # docker tagging
-tag: tag-arch tag-version ## Generate container tags for the `{version}` ans `latest` tags
+tag: tag-latest tag-version ## Generate container tags for the `{version}` ans `latest` tags
 
 tag-latest: ## Generate container `latest` tag
 	@echo 'create tag latest'
