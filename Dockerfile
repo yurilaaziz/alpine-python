@@ -1,6 +1,6 @@
 FROM frolvlad/alpine-glibc AS builder
 MAINTAINER Amine Ben Asker <ben.asker.amine@gmail.com>
-ARG python_version=3.5.6
+ARG python_version
 ARG python_configure_options=""
 RUN apk add --no-cache wget \
             gcc \
