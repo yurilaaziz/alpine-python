@@ -5,17 +5,17 @@ env:
   - ARCH=amd64
   - CI=amd64
   matrix:
-  - PYTHON_VERSION=3.4.9
+  - PYTHON_VERSION=3.4.9 $TRAVIS_JOB_ID
   - PYTHON_VERSION=3.5.6
   - PYTHON_VERSION=3.6.8
   - PYTHON_VERSION=3.7.2
 
 script:
-  - make build
-  - make publish
+- make build
+- make publish
 after_success:
-  - make build DOCKER_IMAGE_TAG=$TRAVIS_BUILD_NUMBER DOCKER_BUILD_OPTIONS="-f Dockerfile-all"
-  - make publish DOCKER_IMAGE_TAG=$TRAVIS_BUILD_NUMBER DOCKER_BUILD_OPTIONS="-f Dockerfile-all"
+- make build PYTHON_VERSION="" DOCKER_IMAGE_TAG=$TRAVIS_BUILD_NUMBER DOCKER_BUILD_OPTIONS="-f Dockerfile-all"
+- make publish PYTHON_VERSION="" DOCKER_IMAGE_TAG=$TRAVIS_BUILD_NUMBER DOCKER_BUILD_OPTIONS="-f Dockerfile-all"
 after_script:
 - docker images
 

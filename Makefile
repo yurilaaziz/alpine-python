@@ -1,9 +1,13 @@
+
+# PYTHON_MAKE_OPTIONS=
+# DOCKER_IMAGE_TAG=
+# CI_BUILD_NUMBER=
+# DOCKER_REGISTRY_USER=
+# DOCKER_REGISTRY_PASSWORD=
+
 #VARS
 DOCKER_IMAGE_PREFIX=$(DOCKER_REGISTRY_USER)
-
-
 DOCKER_IMAGE_NAME=python$(DOCKER_IMAGE_VERSION)$(DOCKER_OS_ARCH)
-PYTHON_MAKE_OPTIONS=
 DOCKER_BUILD_ARGS:=
 
 ifndef CI_BUILD_NUMBER
@@ -25,15 +29,19 @@ else
 	DOCKER_IMAGE_VERSION:=3-all
 endif
 
-ifndef DOCKER_IMAGE_TAG
-	DOCKER_IMAGE_TAG:="untagged"
-endif
-
 ifdef PYTHON_VERSION
 	DOCKER_BUILD_ARGS:=$(DOCKER_BUILD_ARGS) --build-arg python_version=$(PYTHON_VERSION)
 endif
 ifdef PYTHON_MAKE_OPTIONS
 	DOCKER_BUILD_ARGS:=$(DOCKER_BUILD_ARGS) --build-arg python_make_options=$(PYTHON_MAKE_OPTIONS)
+endif
+
+ifdef ARCH
+	DOCKER_BUILD_ARGS:=$(DOCKER_BUILD_ARGS) --build-arg image_arch=$(ARCH)
+endif
+
+ifdef DOCKER_REGISTRY_USER
+	DOCKER_BUILD_ARGS:=$(DOCKER_BUILD_ARGS) --build-arg image_prefix=$(DOCKER_REGISTRY_USER)
 endif
 
 
@@ -70,11 +78,15 @@ publish-version: tag-version ## Publish the `{version}` taged container
 	docker push $(DOCKER_IMAGE_PREFIX)/$(DOCKER_IMAGE_NAME)
 
 # docker tagging
-tag: tag-latest tag-version ## Generate container tags for the `{version}` ans `latest` tags
+tag: tag-latest tag-version tag-prefix ## Generate container tags for the `{version}` ans `latest` tags
 
 tag-latest: ## Generate container `latest` tag
 	@echo 'create tag latest'
 	docker tag $(DOCKER_IMAGE_NAME) $(DOCKER_IMAGE_PREFIX)/$(DOCKER_IMAGE_NAME):latest
+
+tag-prefix: ## Generate container `{prefix}` tag
+	@echo 'create tag $(DOCKER_IMAGE_NAME)'
+	docker tag $(DOCKER_IMAGE_NAME) $(DOCKER_IMAGE_PREFIX)/$(DOCKER_IMAGE_NAME)
 
 tag-version: ## Generate container `{version}` tag
 	@echo 'create tag $(DOCKER_IMAGE_NAME)'
