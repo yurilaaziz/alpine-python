@@ -1,6 +1,15 @@
+ARG image_prefix
+ARG image_arch
+FROM ${image_prefix}/python3.4-${image_arch} as py34
+FROM ${image_prefix}/python3.5-${image_arch} as py35
+FROM ${image_prefix}/python3.6-${image_arch} as py36
+FROM ${image_prefix}/python3.7-${image_arch} as py37
+
 FROM alpine
 MAINTAINER Amine Ben Asker <ben.asker.amine@gmail.com>
-COPY --from=yurilz/python3.4 /usr/local /usr/local
-COPY --from=yurilz/python3.5 /usr/local /usr/local
-COPY --from=yurilz/python3.6 /usr/local /usr/local
-COPY --from=yurilz/python3.7 /usr/local /usr/local
+COPY --from=py34 /usr/local /opt/python3.4
+COPY --from=py35 /usr/local /opt/python3.5
+COPY --from=py36 /usr/local /opt/python3.6
+COPY --from=py37 /usr/local /opt/python3.7
+ENV PATH="/opt/python3.4/bin:/opt/python3.5/bin:/opt/python3.6/bin:/opt/python3.7/bin:${PATH}"
+
